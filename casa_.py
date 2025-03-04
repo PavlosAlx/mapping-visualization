@@ -1,14 +1,22 @@
 import streamlit as st
+import os
 import folium
 from streamlit_folium import folium_static
 import random
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
 
-# Google Sheets authentication setup
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("sheets-access.json", scope)
+
+# Load credentials from an environment variable for streamlit deployment
+creds_json = os.getenv("GOOGLE_SHEET_CREDS")
+creds_dict = json.loads(creds_json) if creds_json else None
+creds = Credentials.from_service_account_info(creds_dict) if creds_dict else None
 client = gspread.authorize(creds)
+
+# # Google Sheets authentication setup
+# scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+# creds = ServiceAccountCredentials.from_json_keyfile_name("sheets-access.json", scope)
+# client = gspread.authorize(creds)
 
 # Open the Google Sheet
 spreadsheet = client.open("Casa - Ayudame dios")
