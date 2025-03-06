@@ -23,9 +23,9 @@ from google.oauth2.service_account import Credentials
 
 try:
     creds_json = st.secrets["google_sheets"]["creds"]
-    st.write("Raw Secrets:", creds_json)  # Display the raw content
+    # st.write("Raw Secrets:", creds_json)  # Display the raw content
     creds_dict = json.loads(creds_json)  # Try to parse the JSON
-    st.write("Parsed Secrets:", creds_dict)  # Display parsed content
+    # st.write("Parsed Secrets:", creds_dict)  # Display parsed content
 
     scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
     creds = ServiceAccountCredentials.from_json_keyfile_name(creds_dict, scope)
@@ -64,7 +64,7 @@ if data:
 else:
     st.warning("No data available to display on the map.")
 
-    
+
 neighborhoods = {
     # Central Barcelona
     "Raval": [41.3784, 2.1685],
