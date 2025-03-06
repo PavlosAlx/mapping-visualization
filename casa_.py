@@ -26,6 +26,11 @@ try:
     st.write("Raw Secrets:", creds_json)  # Display the raw content
     creds_dict = json.loads(creds_json)  # Try to parse the JSON
     st.write("Parsed Secrets:", creds_dict)  # Display parsed content
+
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+    creds = ServiceAccountCredentials.from_json_keyfile_name(creds_dict, scope)
+    client = gspread.authorize(creds)
+
 except Exception as e:
     st.error(f"Error loading credentials: {e}")
 
@@ -52,8 +57,14 @@ except Exception as e:
 
 data = data[:25]  # Limit to first 25 rows
 
-barcelona_map = folium.Map(location=[41.3784, 2.1685], zoom_start=13)
+if data:
+    barcelona_map = folium.Map(location=[41.3784, 2.1685], zoom_start=13)
+    # Add markers or other map features here using the `data`
+    st_folium(barcelona_map)  # Display map using st_folium
+else:
+    st.warning("No data available to display on the map.")
 
+    
 neighborhoods = {
     # Central Barcelona
     "Raval": [41.3784, 2.1685],
