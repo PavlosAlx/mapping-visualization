@@ -1,17 +1,30 @@
 import streamlit as st
+import json
 import os
 import folium
 from streamlit_folium import folium_static
 import random
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+from google.oauth2.service_account import Credentials
 
 
-# Load credentials from an environment variable for streamlit deployment
-creds_json = os.getenv("GOOGLE_SHEET_CREDS")
-creds_dict = json.loads(creds_json) if creds_json else None
-creds = Credentials.from_service_account_info(creds_dict) if creds_dict else None
+# # Load credentials from an environment variable for streamlit deployment
+# creds_json = os.getenv("GOOGLE_SHEET_CREDS")
+# if not creds_json:
+#     raise ValueError("Environment variable 'GOOGLE_SHEET_CREDS' is not set.")
+# creds_dict = json.loads(creds_json)
+# creds = Credentials.from_service_account_info(creds_dict)
+# if creds is None:
+#     raise ValueError("Failed to create credentials.")
+# client = gspread.authorize(creds)
+
+# Load credentials from Streamlit secrets
+creds_json = st.secrets["google_sheets"]["creds"]
+creds_dict = json.loads(creds_json)
+creds = Credentials.from_service_account_info(creds_dict)
 client = gspread.authorize(creds)
+
 
 # # Google Sheets authentication setup
 # scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
@@ -19,8 +32,17 @@ client = gspread.authorize(creds)
 # client = gspread.authorize(creds)
 
 # Open the Google Sheet
-spreadsheet = client.open("Casa - Ayudame dios")
-sheet = spreadsheet.sheet1
+try:
+    spreadsheet = client.open("Casa - Ayudame dios")
+    sheet = spreadsheet.worksheet('first_search')
+except Exception as e:
+    st.error(f"Error accessing the Google Sheet: {str(e)}")
+
+try:
+    data = sheet.get_all_records(expected_headers=expected_headers)
+except Exception as e:
+    print(f"Error fetching records from Google Sheets: {e}")
+    data = []
 
 # Load data
 expected_headers = ["Περιοχή", "Τιμή", "Τετραγωνικά"]

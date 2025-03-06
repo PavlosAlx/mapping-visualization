@@ -1,2 +1,3 @@
 sheets-access.json
 venv/*
+*.toml
