@@ -20,10 +20,18 @@ from google.oauth2.service_account import Credentials
 # client = gspread.authorize(creds)
 
 # Load credentials from Streamlit secrets
-creds_json = st.secrets["google_sheets"]["creds"]
-creds_dict = json.loads(creds_json)
-creds = Credentials.from_service_account_info(creds_dict)
-client = gspread.authorize(creds)
+
+# check if it can load secrets - remove afterwards
+st.write("Secrets Content:", st.secrets)
+
+try:
+    creds_json = st.secrets["google_sheets"]["creds"]
+    st.write("Raw Secrets:", creds_json)  # Display the raw content
+    creds_dict = json.loads(creds_json)  # Try to parse the JSON
+    st.write("Parsed Secrets:", creds_dict)  # Display parsed content
+except Exception as e:
+    st.error(f"Error loading credentials: {e}")
+
 
 
 # # Google Sheets authentication setup
