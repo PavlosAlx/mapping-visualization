@@ -19,10 +19,7 @@ from google.oauth2.service_account import Credentials
 #     raise ValueError("Failed to create credentials.")
 # client = gspread.authorize(creds)
 
-# Load credentials from Streamlit secrets
-
-# check if it can load secrets - remove afterwards
-st.write("Secrets Content:", st.secrets)
+# Load credentials from Streamlit secrets - Streamlit Cloud
 
 try:
     creds_json = st.secrets["google_sheets"]["creds"]
@@ -33,8 +30,7 @@ except Exception as e:
     st.error(f"Error loading credentials: {e}")
 
 
-
-# # Google Sheets authentication setup
+# # Google Sheets authentication setup from json locally
 # scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 # creds = ServiceAccountCredentials.from_json_keyfile_name("sheets-access.json", scope)
 # client = gspread.authorize(creds)
@@ -46,16 +42,15 @@ try:
 except Exception as e:
     st.error(f"Error accessing the Google Sheet: {str(e)}")
 
+# Load data
+expected_headers = ["Περιοχή", "Τιμή", "Τετραγωνικά"]
 try:
     data = sheet.get_all_records(expected_headers=expected_headers)
 except Exception as e:
     print(f"Error fetching records from Google Sheets: {e}")
     data = []
 
-# Load data
-expected_headers = ["Περιοχή", "Τιμή", "Τετραγωνικά"]
-data = sheet.get_all_records(expected_headers=expected_headers)
-data = data[:15]  # Limit to first 15 rows
+data = data[:25]  # Limit to first 25 rows
 
 barcelona_map = folium.Map(location=[41.3784, 2.1685], zoom_start=13)
 
